@@ -1,0 +1,19 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      database: blogdb
+      port: 27017
+      host: 127.0.0.1
+      authentication-database: admin
+
+mongock:
+  change-logs-scan-package: com.example.config
+jwt:
+  secret: "secret"
+  access.expire: "1000000"
+  refresh.expire: "100000000"
