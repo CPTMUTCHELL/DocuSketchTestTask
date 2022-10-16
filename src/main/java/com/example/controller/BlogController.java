@@ -97,7 +97,7 @@ public class BlogController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", example = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsb2xBIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImV4cCI6MTY2Njc3Njg1OX0.Tmri0LLG8GT1kurAy6LcFXu4mdWF8A5Rhy2t7d1nDXo"),
     })
-    @ApiOperation(value = "Get all blogs")
+    @ApiOperation(value = "Get all blogs for a particular user")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok",response = Blog.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Internal error")
@@ -105,8 +105,9 @@ public class BlogController {
     )
     @GetMapping("/byUser/{userId}")
     public ResponseEntity<List<Blog>> getAllByUserId(
-            @ApiParam(name = "id", example = "63493d1182cad339430831b3", type = "String", value = "user id", required = true)
-            @PathVariable String userId){
+            @ApiParam(name = "userId", example = "63493d1182cad339430831b3", type = "String", value = "userId", required = true)
+            @PathVariable("userId") String userId){
+        System.out.println(userId);
         return new ResponseEntity<>(service.getAllByUserId(userId), HttpStatus.OK);
     }
     @ApiOperation(value = "Get blog by id")

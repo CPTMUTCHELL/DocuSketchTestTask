@@ -39,8 +39,8 @@ public class Config  extends WebSecurityConfigurerAdapter  {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
                 .antMatchers("/blogs/**","/users/**").access("not( hasRole('ROLE_REFRESH') )")
+                .antMatchers("/blogs/**","/users/**").hasAnyRole("ADMIN","USER")
                 .antMatchers("/auth/login","/auth/registration").permitAll()
-
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(filter)
