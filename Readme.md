@@ -6,7 +6,7 @@
 
 Database will be populated with user 
 
-username: admin password:admin role ROLE_ADMIN
+username: admin password: admin role ROLE_ADMIN
 
 and roles: ROLE_ADMIN and ROLE_USER
 
