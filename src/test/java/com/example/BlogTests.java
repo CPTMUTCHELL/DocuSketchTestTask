@@ -37,7 +37,12 @@ import static org.mockito.Mockito.times;
 public class BlogTests {
     @Mock
     private BlogRepository blogRepository;
-
+    @Mock
+    private UserService userService;
+    @Mock
+    private Authentication authentication;
+    @Mock
+    private SecurityContext securityContext;
     @InjectMocks
     private BlogService blogService;
 
@@ -45,9 +50,12 @@ public class BlogTests {
     private Blog blog1 = new Blog();
     private Blog blog2 = new Blog();
     private final List<Blog> blogs = new ArrayList<>();
+    private final User user = new User();
 
     @BeforeEach
     void init(){
+        user.setId(blog1.getUserId());
+        user.setUsername("admin");
         blog1.setUserId("1");
         blog1.setId("1");
         blog1.setValue("blog1");
@@ -75,7 +83,7 @@ public class BlogTests {
         verify(blogRepository, times(1)).findById("1");
     }
     @Test
-    void getBlogsByUserId() throws CustomException {
+    void getBlogsByUserId() {
         when(blogRepository.findAllByUserId("1")).thenReturn(blogs);
         var blogsByUserId = blogService.getAllByUserId("1");
         assertEquals(2,blogsByUserId.size());
@@ -89,8 +97,40 @@ public class BlogTests {
         assertEquals(msg, ex.getMessage());
         assertEquals(404,ex.getResponseStatus().value());
     }
+    @Test
+    void createNewBlog() throws CustomException {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        when(userService.getByUsername(user.getUsername())).thenReturn(user);
+        var blogDto =new BlogDto();
+        blogDto.setValue("New blog");
+        var blogExpected = new Blog();
+        blogExpected.setId("3");
+        blogExpected.setUserId(blog1.getUserId());
+        blogExpected.setValue(blogDto.getValue());
+        when(blogRepository.save(isA(Blog.class))).thenReturn(blogExpected);
+        var savedBlog =  blogService.save(blogDto);
+        assertEquals(blogExpected.getUserId(),savedBlog.getUserId());
+        assertEquals(blogExpected.getId(),savedBlog.getId());
+        assertEquals(blogExpected.getValue(),savedBlog.getValue());
+        verify(blogRepository, times(1)).save(any(Blog.class));
+    }
+    @Test
+    void updateBlog() throws CustomException {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
-
-
+        when(securityContext.getAuthentication().getName()).thenReturn(user.getUsername());
+        when(userService.getByUsername(user.getUsername())).thenReturn(user);
+        var blogDto =new BlogDto();
+        blogDto.setValue("New blog update");
+        blog1.setValue(blogDto.getValue());
+        when(blogRepository.save(isA(Blog.class))).thenReturn(blog1);
+        when(blogRepository.findById(blog1.getId())).thenReturn(Optional.ofNullable(blog1));
+        var savedBlog =  blogService.updateById(blog1.getId(),blogDto);
+        assertEquals(blog1.getValue(),savedBlog.getValue());
+        verify(blogRepository, times(1)).save(any(Blog.class));
+    }
 
 }
