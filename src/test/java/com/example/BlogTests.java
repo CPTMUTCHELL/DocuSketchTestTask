@@ -54,8 +54,7 @@ public class BlogTests {
 
     @BeforeEach
     void init(){
-        user.setId(blog1.getUserId());
-        user.setUsername("admin");
+
         blog1.setUserId("1");
         blog1.setId("1");
         blog1.setValue("blog1");
@@ -118,6 +117,8 @@ public class BlogTests {
     }
     @Test
     void updateBlog() throws CustomException {
+        user.setId(blog1.getUserId());
+        user.setUsername("admin");
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
